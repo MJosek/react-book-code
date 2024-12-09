@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
 
-function App2() {
+function App21() {
   const [num, setNum] = useState(0);
   useEffect(() => {
     console.log('effect');
     const timer = setInterval(()=>{
         console.log(num);
     },1000)
-    
+    return(()=>{
+      console.log("xxx");
+      
+      clearInterval(timer)
+    })
   }, [num]);
   return (
     <div className="App">
-      <div onClick={() => setCount((prevCount) => prevCount + 1)}>{count}</div>
+      <div onClick={()=>setNum(num + 1)}>{num}</div>
     </div>
   );
 }
 
-export default App2;
+export default App21;

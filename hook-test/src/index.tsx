@@ -1,12 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// import App from './App.tsx';
-import App2 from './App2.tsx';
+import App4 from './App6.tsx';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-    // <App />
-    <App2/>
+    <App4/>
 );
