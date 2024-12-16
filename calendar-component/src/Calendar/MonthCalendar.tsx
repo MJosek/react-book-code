@@ -2,8 +2,17 @@ import React from "react";
 import "./index.scss";
 import { CalendarProps } from ".";
 import { Dayjs } from "dayjs";
-import Header from "./Header.tsx";
-const weekList = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+import CalendarLocale from "./locale/en-US.ts";
+import classnames from "classnames";
+const weekList = [
+  "sunday",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+];
 
 interface MonthCalendarProps extends CalendarProps {}
 const getAllDays = (date: Dayjs) => {
@@ -29,7 +38,12 @@ const getAllDays = (date: Dayjs) => {
   }
   return daysInfo;
 };
-function renderDays(days: Array<{ date: Dayjs; currentMonth: boolean }>) {
+function renderDays(
+  days: Array<{ date: Dayjs; currentMonth: boolean }>,
+  dateRender: MonthCalendarProps["dateRender"],
+  dateInnerContent: MonthCalendarProps["dateInnerContent"],
+  value: MonthCalendarProps["value"]
+) {
   const rows: any = [];
   for (let i = 0; i < 6; i++) {
     const row: any = [];
@@ -38,35 +52,59 @@ function renderDays(days: Array<{ date: Dayjs; currentMonth: boolean }>) {
       row[j] = (
         <div
           className={
-            "calendar-month-body-cell" +
-            (item.currentMonth ? " calendar-month-body-cell-current" : "")
+            "calendar-month-body-cell " +
+            (item.currentMonth ? "calendar-month-body-cell-current" : "")
           }
         >
-          {item.date.date()}
+          {dateRender ? (
+            dateRender(item.date)
+          ) : (
+            <div className="calendar-month-body-cell-date">
+              <div
+                className={classnames(
+                  "calendar-month-body-cell-date-value",
+                  value.format("YYYY-MM-DD") === item.date.format("YYYY-MM-DD")
+                    ? "calendar-month-body-cell-date-selected"
+                    : ""
+                )}
+              >
+                {item.date.date()}
+              </div>
+              <div className="calendar-month-cell-body-date-content">
+                {dateInnerContent?.(item.date)}
+              </div>
+            </div>
+          )}
         </div>
       );
     }
     rows.push(row);
   }
-  return rows.map((row) => (
-    <div className="calendar-month-body-row">{row}</div>
+  return rows.map((row, i) => (
+    <div key={i} className="calendar-month-body-row">
+      {row}
+    </div>
   ));
 }
 const MonthCalendar: React.FC<MonthCalendarProps> = (props) => {
-  const allDays = getAllDays(props.value);
+  const { dateRender, dateInnerContent, locale, value } = props;
+  const allDays = getAllDays(value);
+  console.log(value, "value");
+
   return (
     <>
-      <Header></Header>
       <div className="calendar-month">
         <div className="calendar-month-list">
           {weekList.map((item) => (
             <div key={item} className="calendar-month-list-item">
-              {item}
+              {CalendarLocale[locale!].week[item]}
             </div>
           ))}
         </div>
       </div>
-      <div className="calendar-days">{renderDays(allDays)}</div>
+      <div className="calendar-days">
+        {renderDays(allDays, dateRender, dateInnerContent, value)}
+      </div>
     </>
   );
 };
